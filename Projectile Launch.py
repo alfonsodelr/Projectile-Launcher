@@ -2,7 +2,7 @@ import pygame, sys
 from PIL import Image
 from pygame import mouse
 
-from pygame.constants import K_SPACE, KEYDOWN, MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT
+from pygame.constants import K_ESCAPE, K_SPACE, KEYDOWN, MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT
 
 def main():
 
@@ -26,6 +26,8 @@ def main():
     starting_location = [280, 700]
     ball_location = starting_location
 
+    enemy1_start = [100,180]
+    enemy2_start = [460,120]
     enemy_location = [100, 180]
     enemy_location_2 = [460, 120]
     ball_dx = 0
@@ -36,8 +38,12 @@ def main():
     enemy1_dx = 30
     enemy2_dx = 30
 
+
     begin = 0
     movement = False
+    Power = 0
+
+    power_font = pygame.font.Font('freesansbold.ttf', 15)
 
     while True:
         
@@ -48,6 +54,10 @@ def main():
             font = pygame.font.Font('freesansbold.ttf', 40)
             text = font.render('CONGRATULATIONS', True, green, blue)
             display.blit(text, (100,400))
+            text = font.render('Space to continue', True, green, blue)
+            display.blit(text, (100,450))
+            text = font.render('Escape to exit', True, green, blue)
+            display.blit(text, (100, 500))
             pygame.display.update()
             clock.tick(60)
 
@@ -55,6 +65,18 @@ def main():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == KEYDOWN:
+                    if event.key == K_SPACE:
+                        begin = 1
+                        Power = 0
+                        score = 0
+                        e1_life = True
+                        e2_life = True
+                        enemy_location = enemy1_start
+                        enemy_location_2 = enemy2_start
+                    if event.key == K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
         
         #Game Loop
         if begin == 1:
@@ -62,6 +84,9 @@ def main():
             display.fill((146,244,255))
             pygame.draw.rect(display, rect_color, pygame.Rect(0,1,600, 10))
             display.blit(player_image, ball_location)
+            
+            power = power_font.render('Power ' + str(Power) + '%', True, (255,0,0), blue)
+            display.blit(power, (10, 750))
 
             text = font.render('Score: ' + str(score), True, green, blue)
             display.blit(text, (10,20))
@@ -90,6 +115,7 @@ def main():
                     next_x, next_y = pygame.mouse.get_pos()
                     ball_dx = x - next_x
                     ball_dy = y - next_y
+                    Power = ball_dx + ball_dy
                     movement = True
                 if event.type == KEYDOWN:
                     if event.key == K_SPACE:
